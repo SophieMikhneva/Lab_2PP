@@ -1,13 +1,16 @@
 import tkinter as tk
-from tkinter import messagebox
+from tkinter import messagebox, simpledialog
 
 
 class DrawingApp:
     def __init__(self, root):
         self.root = root
         self.root.title("Графический редактор")
+        # Размеры холста
+        self.canvas_width = 800
+        self.canvas_height = 600
         # Холст
-        self.canvas = tk.Canvas(self.root, width=800, height=600, bg="white")
+        self.canvas = tk.Canvas(self.root, width=self.canvas_width, height=self.canvas_height, bg="white")
         self.canvas.pack()
         self.last_x, self.last_y = None, None
 
@@ -24,6 +27,10 @@ class DrawingApp:
         file_menu.add_command(label="Новый", command=self.new_file)
         file_menu.add_command(label="Выход", command=self.exit_program)
         menu_bar.add_cascade(label="Файл", menu=file_menu)
+        # Меню "Настройки"
+        settings_menu = tk.Menu(menu_bar, tearoff=0)
+        settings_menu.add_command(label="Размеры окна", command=self.change_window_size)
+        menu_bar.add_cascade(label="Настройки", menu=settings_menu)
         self.root.config(menu=menu_bar)
 
     def on_button_press(self, event):
@@ -38,6 +45,20 @@ class DrawingApp:
 
     def new_file(self):
         self.canvas.delete("all")
+
+    def exit_program(self):
+        self.root.quit()
+
+    def change_window_size(self):
+        """Изменяет размеры холста."""
+        try:
+            new_width = int(simpledialog.askstring("Размеры окна", "Введите новую ширину:"))
+            new_height = int(simpledialog.askstring("Размеры окна", "Введите новую высоту:"))
+            self.canvas.config(width=new_width, height=new_height)
+            self.canvas_width = new_width
+            self.canvas_height = new_height
+        except ValueError:
+            messagebox.showerror("Ошибка", "Введено некорректное значение.")
 
     def exit_program(self):
         self.root.quit()
